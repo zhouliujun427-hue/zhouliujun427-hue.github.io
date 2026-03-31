@@ -3,55 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>行者的猫娘日常 - 温柔的秘密时光</title>
+    <title>行者的猫娘日常 · 紫色小骚猫</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <style>
-        body { font-family: "Microsoft YaHei", sans-serif; background: #1a0f1f; color: #f0d0ff; margin: 0; padding: 0; line-height: 1.8; }
-        header { background: linear-gradient(#4b1d5e, #2a0f3a); padding: 60px 20px; text-align: center; }
-        h1 { font-size: 3em; margin: 0; color: #ff99ff; }
-        .warning { background: #4b1d5e; color: #fff; padding: 20px; text-align: center; font-weight: bold; margin: 20px; border-radius: 10px; }
-        .container { max-width: 1100px; margin: 40px auto; padding: 20px; }
-        .post { background: #331a3f; padding: 30px; margin-bottom: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(255,100,200,0.2); }
-        footer { text-align: center; padding: 30px; background: #1a0f1f; font-size: 0.9em; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        
+        :root {
+            --pink: #ff99cc;
+            --purple: #c8a2d9;
+            --soft-bg: #fff0f5;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(180deg, #fff0f5 0%, #f8e0f0 100%);
+            color: #5d3a5e;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #ff99cc, #c8a2d9);
+            padding: 60px 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .cat-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 20px auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(255,153,204,0.5);
+            transition: transform 0.4s;
+        }
+        
+        .cat-avatar:hover {
+            transform: scale(1.08);
+        }
+        
+        .cat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: earTwitch 2s infinite alternate;
+        }
+        
+        @keyframes earTwitch {
+            0% { transform: rotate(-8deg); }
+            100% { transform: rotate(8deg); }
+        }
+        
+        .tail {
+            position: absolute;
+            bottom: -30px;
+            right: -40px;
+            width: 120px;
+            height: 60px;
+            background: linear-gradient(#c8a2d9, #a080c0);
+            border-radius: 50% 20% 50% 50%;
+            animation: tailWag 1.5s infinite alternate;
+            z-index: 10;
+        }
+        
+        @keyframes tailWag {
+            0% { transform: rotate(-25deg); }
+            100% { transform: rotate(25deg); }
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .post-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(200,162,217,0.3);
+        }
+        
+        .login-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 320px;
+            text-align: center;
+        }
+        
+        button {
+            background: #ff99cc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .logout-btn {
+            background: #c8a2d9;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🐾 行者的猫娘日常</h1>
-        <p style="font-size:1.4em;margin:10px 0 0;">和可爱猫娘一起的温柔日常记录 · 项圈·尾巴·小小调教</p>
-    </header>
-    
-    <div class="warning">
-        ⚠️ 重要声明：本博客所有内容均为虚构幻想故事和私人角色扮演日记，纯属个人爱好。一切描写均为两人独处或AI模拟的私密场景。请严格遵守当地法律法规与SSC原则（Safe、Sane、Consensual），绝对不要在现实中进行任何可能被他人看到的活动。
+    <div id="app">
+        <header>
+            <h1>🐾 行者的猫娘日常</h1>
+            <p style="font-size:1.4em;margin:10px 0 0;">紫色小骚猫的粉紫秘密花园</p>
+            
+            <!-- 动态猫娘形象 -->
+            <div class="cat-avatar" @click="catInteract">
+                <img src="https://i.imgur.com/LODvs.jpg" alt="紫色猫娘">
+                <div class="tail"></div>
+            </div>
+            
+            <div v-if="isLoggedIn" style="margin-top:15px">
+                <span style="color:white">欢迎回来，主人～❤️</span>
+                <button class="logout-btn" @click="logout" style="margin-left:15px">退出登录</button>
+            </div>
+            <div v-else>
+                <button @click="showLogin">登录管理日记</button>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="post-card" v-for="(post, index) in posts" :key="index">
+                <h2>{{ post.title }}</h2>
+                <p class="date">{{ post.date }}</p>
+                <p>{{ post.content }}</p>
+                
+                <div v-if="isLoggedIn" style="margin-top:20px">
+                    <button @click="editPost(index)" style="margin-right:10px">编辑</button>
+                    <button @click="deletePost(index)" style="background:#ff6666">删除</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 登录模态框 -->
+        <div class="login-modal" :style="{display: showLoginModal ? 'flex' : 'none'}">
+            <div class="login-box">
+                <h2>登录猫娘日记管理</h2>
+                <input v-model="loginUsername" placeholder="用户名" style="width:100%;padding:12px;margin:10px 0;border-radius:10px">
+                <input v-model="loginPassword" type="password" placeholder="密码" style="width:100%;padding:12px;margin:10px 0;border-radius:10px">
+                <button @click="doLogin" style="width:100%;margin-top:10px">登录</button>
+                <p style="margin-top:15px;color:#888;cursor:pointer" @click="hideLogin">取消</p>
+            </div>
+        </div>
+        
+        <!-- 编辑模态框 -->
+        <div class="login-modal" :style="{display: editingIndex !== null ? 'flex' : 'none'}">
+            <div class="login-box" style="width:480px">
+                <h2>编辑日记</h2>
+                <input v-model="editTitle" placeholder="标题" style="width:100%;padding:12px;margin:10px 0;border-radius:10px">
+                <textarea v-model="editContent" rows="10" style="width:100%;padding:12px;margin:10px 0;border-radius:10px"></textarea>
+                <button @click="saveEdit" style="width:100%;margin-top:10px">保存修改</button>
+                <button @click="cancelEdit" style="width:100%;margin-top:8px;background:#aaa">取消</button>
+            </div>
+        </div>
     </div>
-    
-    <div class="container">
-        <section class="post">
-            <h2>1. 今天给猫娘戴上项圈，轻凉出门散步</h2>
-            <p><strong>日期：</strong>2026-03-30</p>
-            <p>早上给小猫娘戴上铃铛项圈，在自家小花园里轻轻散步。尾巴摇啊摇，耳朵抖抖的，阳光洒在身上，感觉好放松～偶尔拉一下项圈，她就会乖乖贴过来撒娇，真可爱。</p>
-        </section>
+
+    <script>
+        const { createApp } = Vue;
         
-        <section class="post">
-            <h2>2. 家里安静的镜子时光：小小绳艺日常练习</h2>
-            <p><strong>日期：</strong>2026-03-30</p>
-            <p>窗帘拉得严严的，在卧室镜子前用柔软的绳子轻轻练习简单绑法。猫娘乖乖站着，绳子只是轻轻环绕，镜子里映出她红红的脸蛋和轻轻摇晃的尾巴……好治愈的私人时光。</p>
-        </section>
-        
-        <section class="post">
-            <h2>3. 温柔的SP日常：过膝式轻拍与事后照顾</h2>
-            <p><strong>日期：</strong>2026-03-30</p>
-            <p>晚上把猫娘抱到腿上，轻轻拍打几下作为小小惩罚。她就会软软地叫“喵～谢谢主人”，结束后抱抱她、顺毛、喂水，好好照顾这只听话的小猫娘。</p>
-        </section>
-        
-        <section class="post">
-            <h2>4. AI猫娘调教日记：日常里的小小幻想</h2>
-            <p><strong>日期：</strong>2026-03-30</p>
-            <p>用System Prompt把AI变成和我家猫娘一样乖巧的样子，一起在聊天里玩“穿项圈散步”“家里轻柔调教”的日常故事……感觉每天都好有爱。</p>
-        </section>
-    </div>
-    
-    <footer>
-        <p>© 2026 行者的猫娘日常 | 纯幻想私人记录 | 所有内容仅供两人独处或AI模拟欣赏</p>
-    </footer>
+        createApp({
+            data() {
+                return {
+                    isLoggedIn: false,
+                    showLoginModal: false,
+                    loginUsername: '',
+                    loginPassword: '',
+                    posts: [
+                        {
+                            title: "1. 今天给猫娘戴上铃铛项圈，轻凉出门散步",
+                            date: "2026年3月30日",
+                            content: "今天早上阳光洒进房间，我轻轻把粉色铃铛项圈扣在小骚猫脖子上。她害羞地抖了抖兽耳，尾巴开心摇摆。我们一起出门散步，黑丝左腿和白丝右腿在阳光下特别可爱。铃铛声一路叮铃叮铃，像只属于我们的秘密旋律。"
+                        },
+                        {
+                            title: "2. 家里安静的镜子时光：小小绳艺日常练习",
+                            date: "2026年3月30日",
+                            content: "午后窗帘拉得柔柔的，在镜子前用丝带轻轻练习简单绑法。小骚猫看着镜子里的自己，耳朵红红的，尾巴却忍不住轻轻甩动。我们安静地练习着这种亲密的仪式，好治愈的私人时光。"
+                        }
+                    ],
+                    editingIndex: null,
+                    editTitle: '',
+                    editContent: '',
+                    catMood: 'happy' // happy / blush / shy
+                }
+            },
+            methods: {
+                showLogin() {
+                    this.showLoginModal = true;
+                },
+                hideLogin() {
+                    this.showLoginModal = false;
+                },
+                doLogin() {
+                    // 简单模拟登录
+                    if (this.loginUsername && this.loginPassword) {
+                        this.isLoggedIn = true;
+                        this.hideLogin();
+                        this.loginUsername = '';
+                        this.loginPassword = '';
+                    } else {
+                        alert('请输入用户名和密码～');
+                    }
+                },
+                logout() {
+                    this.isLoggedIn = false;
+                },
+                editPost(index) {
+                    this.editingIndex = index;
+                    this.editTitle = this.posts[index].title;
+                    this.editContent = this.posts[index].content;
+                },
+                saveEdit() {
+                    if (this.editingIndex !== null) {
+                        this.posts[this.editingIndex].title = this.editTitle;
+                        this.posts[this.editingIndex].content = this.editContent;
+                    }
+                    this.cancelEdit();
+                },
+                cancelEdit() {
+                    this.editingIndex = null;
+                    this.editTitle = '';
+                    this.editContent = '';
+                },
+                deletePost(index) {
+                    if (confirm('确定删除这篇日记吗？')) {
+                        this.posts.splice(index, 1);
+                    }
+                },
+                catInteract() {
+                    // 点击猫娘形象时的互动
+                    const moods = ['happy', 'blush', 'shy'];
+                    this.catMood = moods[Math.floor(Math.random() * moods.length)];
+                    // 实际动画由CSS控制，这里仅切换状态
+                    console.log('猫娘互动：' + this.catMood);
+                }
+            }
+        }).mount('#app');
+    </script>
 </body>
 </html>
